@@ -33,8 +33,12 @@ object Firework:
    * You will have to use “typed patterns” to match on case classes and
    * “literal patterns” to match on case objects.
    */
-  def next(firework: Firework): Firework =
-    ???
+  def next(firework: Firework): Firework = firework match {
+    case Waiting(countDown, startPosition, numberOfParticles, particlesColor) => if countDown > 0 then copy(countDown = countDown - 1) else Launched.init(startPosition, numberOfParticles, particlesColor)
+    case Launched(countDown, position, direction, numberOfParticles, particlesColor) => if countDown > 0 then copy(countDown = countDown - 1) else Exploding.init(numberOfParticles, direction, position, particlesColor)
+    case Exploding(countDown, particles) => if countDown > 0 then copy(countDown = countDown - 1) else Done
+    case Done => Done
+  }
 
 end Firework
 
@@ -62,7 +66,7 @@ case class Waiting(countDown: Int, startPosition: Point, numberOfParticles: Int,
   def next: Firework =
     if countDown > 0 then
       copy(countDown = countDown - 1)
-    else ???
+    else Launched.init(startPosition, numberOfParticles, particlesColor)
 
 end Waiting
 
@@ -110,7 +114,9 @@ case class Launched(countDown: Int, position: Point, direction: Angle, numberOfP
    *         and use the constant [[Settings.propulsionSpeed]] for the speed of the firework.
    */
   def next: Firework =
-    ???
+    if countDown > 0 then
+      copy(countDown = countDown - 1)
+    else Exploding.init(numberOfParticles, direction, position, particlesColor)
 
 end Launched
 
@@ -148,7 +154,9 @@ case class Exploding(countDown: Int, particles: Particles) extends Firework:
    *       of this firework.
    */
   def next: Firework =
-    ???
+    if countDown > 0 then
+      copy(countDown = countDown - 1)
+    else Done
 
 end Exploding
 
@@ -195,16 +203,16 @@ case class Particle(horizontalSpeed: Double, verticalSpeed: Double, position: Po
     // should be the current value reduced by air friction
     // Hint: use the operation `Motion.drag`
     val updatedHorizontalSpeed: Double =
-      ???
+      Motion.drag(horizontalSpeed)
     // Vertical speed is subject to both air friction and gravity, its next
     // value should be the current value minus the gravity, then reduced by
     // air friction
     val updatedVerticalSpeed: Double =
-      ???
+      Motion.drag(verticalSpeed - Settings.gravity)
     // Particle position is updated according to its new speed
     val updatedPosition = Point(position.x + updatedHorizontalSpeed, position.y + updatedVerticalSpeed)
     // Construct a new particle with the updated position and speed
-    ???
+    Particle(updatedHorizontalSpeed, updatedVerticalSpeed, updatedPosition, color)
 
 end Particle
 
