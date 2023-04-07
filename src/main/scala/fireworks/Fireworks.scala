@@ -33,12 +33,8 @@ object Firework:
    * You will have to use “typed patterns” to match on case classes and
    * “literal patterns” to match on case objects.
    */
-  def next(firework: Firework): Firework = firework match {
-    case Waiting(countDown, startPosition, numberOfParticles, particlesColor) => if countDown > 0 then copy(countDown = countDown - 1) else Launched.init(startPosition, numberOfParticles, particlesColor)
-    case Launched(countDown, position, direction, numberOfParticles, particlesColor) => if countDown > 0 then copy(countDown = countDown - 1) else Exploding.init(numberOfParticles, direction, position, particlesColor)
-    case Exploding(countDown, particles) => if countDown > 0 then copy(countDown = countDown - 1) else Done
-    case Done => Done
-  }
+  def next(firework: Firework): Firework = 
+    ???
 
 end Firework
 
